@@ -13,8 +13,11 @@ class Iblock
         $element = new \CIBlockElement;
         
         $res = $iblock->GetList([], ["CODE" => "LOG"]); 
-        $ar_res = $res->Fetch();
-        $IBLOCK_ID = $ar_res["ID"]; 
+        if ($ar_res = $res->Fetch()) {
+            $IBLOCK_ID = $ar_res["ID"];
+        }else {
+            die("Ошибка: Инфоблок с кодом LOG не найден.");
+        }
         
         $arOrder = [
             "DATE_ACTIVE_FROM" => "DESC", 
@@ -32,7 +35,9 @@ class Iblock
             if($count <= 10){
                 continue;
             }
-            $element->Delete($elem["ID"]);
+            if ($elem["IBLOCK_ID"] == $IBLOCK_ID) {
+                $element->Delete($elem["ID"]);
+            }
         }
         }
         return '\\' . __CLASS__ . '::' . __FUNCTION__ . '();';
